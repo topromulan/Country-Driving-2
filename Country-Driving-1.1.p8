@@ -95,11 +95,11 @@ function _game_init()
  trip.terrain[3].sprite=8
  trip.terrain[4]={}
  trip.terrain[4].sprite=1
+ trip.terrain[4].berries={}
+ trip.terrain[4].berries[1]={}
+ trip.terrain[4].berries[1].x=10
+ trip.terrain[4].berries[1].y=1
  trip.terrain[5]=look_ahead(trip.terrain[4])
- 
- 
- 
- 
  
 end
 
@@ -150,7 +150,6 @@ function driving_update()
  end
  
  poke(0x3241,(1-car.speed)*20)
- debug1=car.speed
 
  trip.distance+=car.speed+rnd(0.01)
  if(trip.distance%8<trip.modulus) then
@@ -267,7 +266,6 @@ function decorate_terrain(land,chance)
   improved.decor[1].sprite=25
   improved.decor[1].x=2
   improved.decor[1].y=2
-  debug1="decoration"
  end
  return improved
 end
@@ -285,14 +283,34 @@ function bloom(terrain)
 end
 
 function plant_berry(terrain)
-  local berry={}
-  berry.x=#terrain.berries
-  berry.y=flr(rnd(4))
-  while(#terrain.berries>1 and berry.y==terrain.berries[#terrain.berries].y) do
-   berry.y=1+flr(rnd(5))
+ local berry={}
+ local xguess,yguess,conflict
+ while(true) do
+  xguess=flr(rnd(8))
+  yguess=-1+flr(rnd(7))
+  conflict=false
+  for b=1,#terrain.berries do
+   if(xguess>=terrain.berries[b].x-1 and
+      xguess<=terrain.berries[b].x+1 and
+      yguess==terrain.berries[b].y-1 and
+      yguess==terrain.berries[b].y+1) then
+    conflict=true
+   end
   end
-  berry.clr=regional_berry_color
+  if(not conflict) then break end
+ end
+ berry.x=xguess
+ berry.y=yguess
+ berry.clr=regional_berry_color
  return berry
+--  local berry={}
+--  berry.x=#terrain.berries-1
+--  berry.y=flr(rnd(4))
+--  while(#terrain.berries>1 and berry.y==terrain.berries[#terrain.berries].y) do
+--   berry.y=1+flr(rnd(5))
+--  end
+--  berry.clr=regional_berry_color
+-- return berry
 end  
 
 function berry_color()
@@ -334,13 +352,13 @@ function berry_picking()
      for b=1,#trip.terrain[t].berries do
       if(trip.terrain[t].berries[b].picked==nil) then
        berryx=8*(t-2)-trip.modulus+trip.terrain[t].berries[b].x+22
-       if(berryx>guy.x and berryx<=guy.x+3) then
+       if(berryx>guy.x+1 and berryx<=guy.x+5) then
         --you can reach it
         if(trip.terrain[t].berries[b].y+8>guy.y+2) then
          sfx(6)
          trip.terrain[t].berries[b].picked=true
          score+=1
-         if(score==10) then
+         if(score==20) then
           --earn a golden bmw
           car.sprite=48
           car.speed_limit=0.75
@@ -348,7 +366,7 @@ function berry_picking()
          end
         else
          --shake it down further
-         trip.terrain[t].berries[b].y+=0.1
+         trip.terrain[t].berries[b].y+=0.05+rnd(0.10)
          sfx(8)
         end
        end 
@@ -381,7 +399,6 @@ function _game_draw()
    end
   end
   if(trip.terrain[t].decor!=nil) then
-   debug2="drawing"
    for d=1,#trip.terrain[t].decor do
     spr(trip.terrain[t].decor[d].sprite,
      trip.terrain[t].x+trip.terrain[t].decor[d].x,
@@ -410,12 +427,12 @@ end
 
 
 __gfx__
-00000000bbb000000000000000000000333333333333333300000000000000000000000000000000033333000000000000000000000000000000000330000000
-00000000bbb000000000000000000003333333333333333330000000000000303000000000333330033333300000000000000000000000000000003333000000
-00700700bbb000000033000000000033333333333333333333000000003003333303003333333333333333330004440000000000000000000000003333000000
-00077000bbb000333033030000000333333333333333333333300000033333333333333333333333333333330444444040400000000003300003300330033000
-00077000343333333333333333333333333333333333333333330033333333333333333333333333333333333333333333333333333333333333333333333333
-00700700343333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333
+000000000bbb00000000000000000000333333333333333300000000000000000000000000000000033333000000000000000000000000000000000330000000
+000000000bbb00000000000000000003333333333333333330000000000000303000000000333330033333300000000000000000000000000000003333000000
+007007000bbb00000033000000000033333333333333333333000000003003333303003333333333333333330004440000000000000000000000003333000000
+000770003bbb00033033030000000333333333333333333333300000033333333333333333333333333333330444444040400000000003300003300330033000
+00077000334333333333333333333333333333333333333333330033333333333333333333333333333333333333333333333333333333333333333333333333
+00700700334333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333
 00000000333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333
 00000000333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333
 00000000ffffffff0000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000000000000000000000
