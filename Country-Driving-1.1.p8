@@ -31,15 +31,27 @@ end
 
 function _draw()
  
+ --draw with original engine
  game_mode.draw()
 
+ --magnify
  for y=0,32 do
   for x=16,47 do
    rectfill((x-16)*4,37+y*4,(x-16)*4+3,37+y*4+3,pget(x,y))
   end
  end 
 
--- rectfill(0,0,127,19,12)
+ --erase
+ rectfill(0,0,127,19,12)
+
+ --dashboard
+ if(driving) then
+  print(flr(car.speed/0.01),64,121,7)
+  print("mph",73,121,15)
+  if(car.cruise) then print("cruise",100,121,11) end
+ end
+  
+ 
 
  print(runtime_cycles,0,118,8)
  print(runtime,10,118,8)
@@ -119,9 +131,11 @@ end
 
 function driving_update()
  car.x=25 car.y=9
- car.speed-=0.003
+ if(not car.cruise) then
+  car.speed-=0.003
+ end
  if(car.speed>car.speed_limit) then
-  car.speed=car.speed_limit-0.05
+  car.speed=car.speed_limit-0.007-rnd(0.004)
  end
  if(btn(1)) then
   car.x+=1 car.speed+=0.01
@@ -129,12 +143,13 @@ function driving_update()
  if(btn(0)) then
   --brakes
   car.x-=1 car.speed*=0.92
+  car.cruise=false
   if(car.speed<0.05) then
    car.speed=0
   end
  else
-  if(car.speed<0.1) then
-   car.speed+=0.015
+  if(car.speed<0.125) then
+   car.speed+=0.005
   end
  end
  if(btn(3)) then
@@ -148,6 +163,9 @@ function driving_update()
  end
  if(btnp(4)) then
   sfx(4) sfx(5) --beep honk
+ end
+ if(btnp(5)) then
+  car.cruise=not car.cruise
  end
  
  poke(0x3241,(1-car.speed)*20)
@@ -344,6 +362,7 @@ function berry_picking()
   if(guy.y>guy.ylimb-1.5 and guy.x>car.x-5 and guy.x<car.x+5) then
    sfx(3)--door shut
    driving=true
+   car.cruise=false
    poke(0x3241,25)
    sfx(0,3)
   elseif(guy.y<guy.ylimt+1.5) then
