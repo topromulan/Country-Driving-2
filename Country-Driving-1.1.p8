@@ -97,8 +97,9 @@ function _game_init()
  trip.terrain[4].sprite=1
  trip.terrain[4].berries={}
  trip.terrain[4].berries[1]={}
- trip.terrain[4].berries[1].x=10
+ trip.terrain[4].berries[1].x=2
  trip.terrain[4].berries[1].y=1
+ trip.terrain[4].berries[1].clr=8
  trip.terrain[5]=look_ahead(trip.terrain[4])
  
 end
