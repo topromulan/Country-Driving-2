@@ -210,13 +210,15 @@ end
 ---update your game here
 function _game_update()
 
+ if(not btn(4)) then btnp4_reminder=false end
+ if(not btn(5)) then btnp5_reminder=false end
+
  if(driving) then
   driving_update()
   mountain_mgmt()
  else
   berry_picking()
  end
-
 
 end
 
@@ -243,6 +245,7 @@ function driving_update()
    car.speed+=0.005
   end
  end
+
  if(btn(3)) then
   car.y+=1
   if(car.speed==0) then
@@ -252,11 +255,13 @@ function driving_update()
    guy.x=22
   end
  end
- if(btnp(4)) then
+ if(btnp(4) and not btnp4_reminder) then
   sfx(4) sfx(5) --beep honk
+  btnp4_reminder=true
  end
- if(btnp(5)) then
+ if(btnp(5) and not btnp5_reminder) then
   car.cruise=not car.cruise
+  btnp5_reminder=true
  end
  
  poke(0x3241,(1-car.speed)*20)
@@ -449,13 +454,14 @@ function berry_picking()
  if(guy.y<guy.ylimt) then guy.y=guy.ylimt end
  if(guy.y>guy.ylimb) then guy.y=guy.ylimb end
 
- if(btn(4)) then
+ if(btn(4) and not btnp4_reminder) then
   if(guy.y>guy.ylimb-1.5 and guy.x>car.x-5 and guy.x<car.x+5) then
    sfx(3)--door shut
    driving=true
    car.cruise=false
    poke(0x3241,25)
    sfx(0,3)
+   btnp4_reminder=true
   elseif(guy.y<guy.ylimt+1.5) then
    --shake down any berries
    for t=1,5 do
