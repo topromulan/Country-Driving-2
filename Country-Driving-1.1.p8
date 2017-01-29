@@ -23,18 +23,21 @@ function _update()
   runtime_cycles+=1
  end
  
- runtime +=1
+ runtime+=1
 
 
  game_mode.update()
 end
 
 function _draw()
+ debug1=trip.mountains.near[1].x
+ debug2=trip.mountains.near[1].milepost
+ 
 
  cls(12)
  
  --draw landscape
- local mx,my,smx,smy
+ local smx,smy
  for m=1,#trip.mountains.far do
   smx=trip.mountains.far[m].scene*32
   smy=96
@@ -138,13 +141,13 @@ function _game_init()
  trip.mountains={}
  trip.mountains.far={}
  trip.mountains.far[1]={}
- trip.mountains.far[1].milepost=6
+ trip.mountains.far[1].milepost=-6
  trip.mountains.far[1].elevation=-2
  trip.mountains.far[1].scene=0
  
  trip.mountains.near={}
  trip.mountains.near[1]={}
- trip.mountains.near[1].milepost=5.5
+ trip.mountains.near[1].milepost=-5.5
  trip.mountains.near[1].elevation=-4
  trip.mountains.near[1].scene=0
 
@@ -168,7 +171,7 @@ function mountain_mgmt()
  end
  
  --few mountains? add
- while(#trip.mountains.far<8) do
+ while(#trip.mountains.far<18) do
   local n
   n=#trip.mountains.far+1
   trip.mountains.far[n]={}
@@ -176,7 +179,7 @@ function mountain_mgmt()
   trip.mountains.far[n].elevation=-4+rnd(5)
   trip.mountains.far[n].scene=flr(rnd(4))
  end
- while(#trip.mountains.near<7) do
+ while(#trip.mountains.near<17) do
   local n
   n=#trip.mountains.near+1
   trip.mountains.near[n]={}
@@ -187,12 +190,12 @@ function mountain_mgmt()
 
  --hang the x/y coordinates
  for m=1,#trip.mountains.far do
-  trip.mountains.far[m].x=trip.mountains.far[m].milepost-trip.distance*0.59
+  trip.mountains.far[m].x=(trip.mountains.far[m].milepost-trip.distance)*0.59
   trip.mountains.far[m].y=22+trip.mountains.far[m].elevation
  end
  for m=1,#trip.mountains.near do
-  trip.mountains.near[m].x=trip.mountains.near[m].milepost-trip.distance*0.91
-  trip.mountains.near[m].y=38+trip.mountains.near[m].elevation
+  trip.mountains.near[m].x=(trip.mountains.near[m].milepost-trip.distance)*0.91
+  trip.mountains.near[m].y=40+trip.mountains.near[m].elevation
  end
 end
 
