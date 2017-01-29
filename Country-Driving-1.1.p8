@@ -155,11 +155,16 @@ function mountain_mgmt()
 
  --passed mountain? retire
  if(trip.mountains.far[1].milepost<trip.distance-100) then
-  debug4="rotating"
   for i=2,#trip.mountains.far do
    trip.mountains.far[i-1]=trip.mountains.far[i]
   end
   trip.mountains.far[#trip.mountains.far]=nil
+ end
+ if(trip.mountains.near[1].milepost<trip.distance-100) then
+  for i=2,#trip.mountains.near do
+   trip.mountains.near[i-1]=trip.mountains.near[i]
+  end
+  trip.mountains.near[#trip.mountains.near]=nil
  end
  
  --few mountains? add
@@ -194,7 +199,6 @@ end
 
 ---update your game here
 function _game_update()
-debug2=trip.mountains.far[3].milepost
 
  if(driving) then
   driving_update()
