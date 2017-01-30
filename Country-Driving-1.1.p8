@@ -2,7 +2,7 @@ pico-8 cartridge // http://www.pico-8.com
 version 8
 __lua__
 -- country drive 1.1
--- by dale r. anderson
+-- by dale r. anderson and barrett j. anderson
 -- 2017 macrowave
 
 function _init()
@@ -49,7 +49,7 @@ function _draw()
  end
 
  rectfill(0,95,127,127,4)--dirt
- 
+
  --draw with original engine
  game_mode.draw()
 
@@ -66,38 +66,35 @@ function _draw()
  rectfill(0,0,127,19,12)
 
  --dashboard
+ rectfill(0,116,127,127,4)
  if(driving) then
-  print(flr(car.speed/0.01),64,121,7)
-  print("mph",73,121,15)
-  print(trip.distance,40,123,1)
-  if(car.cruise) then print("cruise",100,121,11) end
+  print(car.mph,60,120,7)
+  print("mph",70,120,15)
  end
-  
- 
+ print("mile "..flr(trip.distance/50)/10,5,120,1)
+ if(car.cruise) then print("cruise",100,120,11) end
 
- print(runtime_cycles,0,118,8)
- print(runtime,10,118,8)
 
-  if(debug1!=nil) then
-   print(debug1,0,30,9,0)
-   if(debug1_memory!=debug1) then debug1_memory=debug1 debug1_reminder=runtime end
-   if(runtime-debug1_reminder>90) then debug1=nil debug1_memory=nil debug1_reminder=nil end  
-  end
-  if(debug2!=nil) then
-   print(debug2,0,40,9,0)
-   if(debug2_memory!=debug2) then debug2_memory=debug2 debug2_reminder=runtime end
-   if(runtime-debug2_reminder>90) then debug2=nil debug2_memory=nil debug2_reminder=nil end  
-  end
-  if(debug3!=nil) then
-   print(debug3,0,59,9,0)
-   if(debug3_memory!=debug3) then debug3_memory=debug3 debug3_reminder=runtime end
-   if(runtime-debug3_reminder>90) then debug3=nil debug3_memory=nil debug3_reminder=nil end  
-  end
-  if(debug4!=nil) then
-   print(debug4,0,69,9,0)
-   if(debug4_memory!=debug4) then debug4_memory=debug4 debug4_reminder=runtime end
-   if(runtime-debug4_reminder>90) then debug4=nil debug4_memory=nil debug4_reminder=nil end  
-  end
+ if(debug1!=nil) then
+  print(debug1,0,30,9,0)
+  if(debug1_memory!=debug1) then debug1_memory=debug1 debug1_reminder=runtime end
+  if(runtime-debug1_reminder>90) then debug1=nil debug1_memory=nil debug1_reminder=nil end  
+ end
+ if(debug2!=nil) then
+  print(debug2,0,40,9,0)
+  if(debug2_memory!=debug2) then debug2_memory=debug2 debug2_reminder=runtime end
+  if(runtime-debug2_reminder>90) then debug2=nil debug2_memory=nil debug2_reminder=nil end  
+ end
+ if(debug3!=nil) then
+  print(debug3,0,59,9,0)
+  if(debug3_memory!=debug3) then debug3_memory=debug3 debug3_reminder=runtime end
+  if(runtime-debug3_reminder>90) then debug3=nil debug3_memory=nil debug3_reminder=nil end  
+ end
+ if(debug4!=nil) then
+  print(debug4,0,69,9,0)
+ if(debug4_memory!=debug4) then debug4_memory=debug4 debug4_reminder=runtime end
+  if(runtime-debug4_reminder>90) then debug4=nil debug4_memory=nil debug4_reminder=nil end  
+ end
   
 end
 
@@ -116,7 +113,8 @@ function _game_init()
  
  car={}
  car.sprite=36
- car.speed=0.1
+ car.speed=0
+ car.mph=0
  car.speed_limit=0.45
 
  trip={}
@@ -245,6 +243,7 @@ function driving_update()
    car.speed+=0.005
   end
  end
+ car.mph=flr(car.speed/0.013)
 
  if(btn(3)) then
   car.y+=1
@@ -264,7 +263,7 @@ function driving_update()
   btnp5_reminder=true
  end
  
- poke(0x3241,(1-car.speed)*20)
+ poke(0x3241,abs(1-car.speed)*20)
 
  trip.distance+=car.speed+rnd(0.01)
  if(trip.distance%8<trip.modulus) then
@@ -584,12 +583,12 @@ __gfx__
 0b0bb4440b0bb44400eee44400eee444111111100000000000000000000000000000000004004000004400003111111133333333000000000000000000000000
 000cc444000cc4440eeee4440eeee444111111160000000000000000000000000000000000000000004400003333333333333333000000000000000003300000
 000cc000000cc0000002200000022000055055000000000000000000000000000000000000000000000000003333333333333333000000003333333333330033
-00000000000000000000000000000000000000000000000000000000cccccccc00000000bbb00000666600000000000000000000000000000000000000000000
-00000000000000000000000000000000000000000000000000000000cb1111bc00000000bbb00000688600000008888800000000000000000000000000000000
-00000000000000000000000000000000111110000000000000000000c1bccb1c00000000bbb00000688600000001111100000000000000000000000000000000
-00999900000000000000000000000000cc1111000000000000000000c1c88c1c00000000bbb00000666600004048888831111111000000000000000000000000
-09cc6cc0000000000000000000000000cc5cc1100000000000000000c1c88c1c0000000004000000400400003333434311111113000000000000000000000000
-99999999000000000000000000000000111111100000000000000000c1bccb1c0000000004000000400400003333434331111133000000000000000000000030
+00000000000000000000000000000000000000000000000000000000cccccccc0000000000000000777700000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000cb1111bc0000000008880000788700000008888800000000000000000000000000000000
+00000000000000000000000000000000111110000000000000000000c1bccb1c0000000008880000788700000001111100000000000000000000000000000000
+00999900000000000000000000000000cc1111000000000000000000c1c88c1c0000000000400000777700004048888831111111000000000000000000000000
+09cc6cc0000000000000000000000000cc5cc1100000000000000000c1c88c1c0000000000000000400400003333434311111113000000000000000000000000
+99999999000000000000000000000000111111100000000000000000c1bccb1c0000000000000000400400003333434331111133000000000000000000000030
 99999996000000000000000000000000111111160000000000000000cb1111bc0000000000000000400400003333434333333333000000000333333033003333
 05500550000000000000000000000000055005500000000000000000cccccccc0000000000000000000000003333333333333333000000003333333333333330
 00000003300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
