@@ -6,8 +6,7 @@ __lua__
 -- 2017 macrowave
 
 function _init()
- runtime=0
- runtime_cycles=0
+ runtime={0,0}
 
  game_mode={}
  game_mode.update=_game_update
@@ -18,12 +17,12 @@ function _init()
 end
 
 function _update()
- if(runtime<0) then
-  runtime=0
-  runtime_cycles+=1
+ if(runtime[1]<0) then
+  runtime[1]=0
+  runtime[2]+=1
  end
  
- runtime+=1
+ runtime[1]+=1
 
  game_mode.update()
 end
@@ -78,23 +77,23 @@ function _draw()
 
  if(debug1!=nil) then
   print(debug1,0,30,9,0)
-  if(debug1_memory!=debug1) then debug1_memory=debug1 debug1_reminder=runtime end
-  if(runtime-debug1_reminder>90) then debug1=nil debug1_memory=nil debug1_reminder=nil end  
+  if(debug1_memory!=debug1) then debug1_memory=debug1 debug1_reminder=runtime[1] end
+  if(runtime[1]-debug1_reminder>90) then debug1=nil debug1_memory=nil debug1_reminder=nil end  
  end
  if(debug2!=nil) then
   print(debug2,0,40,9,0)
-  if(debug2_memory!=debug2) then debug2_memory=debug2 debug2_reminder=runtime end
-  if(runtime-debug2_reminder>90) then debug2=nil debug2_memory=nil debug2_reminder=nil end  
+  if(debug2_memory!=debug2) then debug2_memory=debug2 debug2_reminder=runtime[1] end
+  if(runtime[1]-debug2_reminder>90) then debug2=nil debug2_memory=nil debug2_reminder=nil end  
  end
  if(debug3!=nil) then
   print(debug3,0,59,9,0)
-  if(debug3_memory!=debug3) then debug3_memory=debug3 debug3_reminder=runtime end
-  if(runtime-debug3_reminder>90) then debug3=nil debug3_memory=nil debug3_reminder=nil end  
+  if(debug3_memory!=debug3) then debug3_memory=debug3 debug3_reminder=runtime[1] end
+  if(runtime[1]-debug3_reminder>90) then debug3=nil debug3_memory=nil debug3_reminder=nil end  
  end
  if(debug4!=nil) then
   print(debug4,0,69,9,0)
- if(debug4_memory!=debug4) then debug4_memory=debug4 debug4_reminder=runtime end
-  if(runtime-debug4_reminder>90) then debug4=nil debug4_memory=nil debug4_reminder=nil end  
+ if(debug4_memory!=debug4) then debug4_memory=debug4 debug4_reminder=runtime[1] end
+  if(runtime[1]-debug4_reminder>90) then debug4=nil debug4_memory=nil debug4_reminder=nil end  
  end
   
 end
@@ -248,11 +247,14 @@ function driving_update()
 
  if(btn(3)) then
   car.y+=1
-  if(car.speed==0) then
-   car.y+=1
-   driving=false
-   sfx(-2,3)
-   guy.x=22
+  if(car.speed==0 and not btnp4_reminder) then
+   --double check to avoid jumping in/out
+   if(buckling_up_until[1]<runtime[1] or buckling_up_until[2]<runtime[2]) then
+    car.y+=1
+    driving=false
+    sfx(-2,3)
+    guy.x=22
+   end
   end
  end
  if(btnp(4) and not btnp4_reminder) then
@@ -473,6 +475,7 @@ function berry_picking()
    poke(0x3241,25)
    sfx(0,3)
    btnp4_reminder=true
+   buckling_up_until={runtime[1]+52,runtime[2]}
   elseif(guy.y<guy.ylimt+1.5) then
    --shake down any berries
    for t=1,5 do
