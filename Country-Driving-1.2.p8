@@ -68,7 +68,7 @@ function _draw()
  if(driving) then
   print(car.mph,60,120,7)
   print("mph",70,120,15)
-  print("mile "..flr(trip.distance/50)/10,5,120,1)
+  print("mile "..flr(trip.distance[1]/50+(32000/50)*trip.distance[2])/10,5,120,1)
  else
   print("berry "..score,5,120,2)
  end
@@ -118,7 +118,7 @@ function _game_init()
  car.speed_limit=0.55
 
  trip={}
- trip.distance=0
+ trip.distance={0,0}
  trip.modulus=1
  trip.terrain={}
  trip.terrain[1]=nil
@@ -158,13 +158,13 @@ end
 function mountain_mgmt()
 
  --passed mountain? retire
- if(trip.mountains.far[1].milepost<trip.distance-100) then
+ if(trip.mountains.far[1].milepost<trip.distance[1]-100) then
   for i=2,#trip.mountains.far do
    trip.mountains.far[i-1]=trip.mountains.far[i]
   end
   trip.mountains.far[#trip.mountains.far]=nil
  end
- if(trip.mountains.near[1].milepost<trip.distance-100) then
+ if(trip.mountains.near[1].milepost<trip.distance[1]-100) then
   for i=2,#trip.mountains.near do
    trip.mountains.near[i-1]=trip.mountains.near[i]
   end
@@ -195,11 +195,11 @@ function mountain_mgmt()
 
  --hang the x/y coordinates
  for m=1,#trip.mountains.far do
-  trip.mountains.far[m].x=(trip.mountains.far[m].milepost-trip.distance)*0.59
+  trip.mountains.far[m].x=(trip.mountains.far[m].milepost-trip.distance[1])*0.59
   trip.mountains.far[m].y=32+trip.mountains.far[m].elevation
  end
  for m=1,#trip.mountains.near do
-  trip.mountains.near[m].x=(trip.mountains.near[m].milepost-trip.distance)*0.91
+  trip.mountains.near[m].x=(trip.mountains.near[m].milepost-trip.distance[1])*0.91
   trip.mountains.near[m].y=45+trip.mountains.near[m].elevation
  end
 end
@@ -268,8 +268,13 @@ function driving_update()
  
  poke(0x3241,abs(1-car.speed)*20)
 
- trip.distance+=car.speed+rnd(0.01)
- if(trip.distance%8<trip.modulus) then
+ if(trip.distance[1]>32000 or trip.distance[1]<0) then
+  trip.distance[1]=0 --modulus a concern?
+  trip.distance[2]+=1
+ end
+
+ trip.distance[1]+=20*car.speed+rnd(0.01)
+ if(trip.distance[1]%8<trip.modulus) then
   --terrain rotation
   trip.terrain[1]=trip.terrain[2]
   trip.terrain[2]=trip.terrain[3]
@@ -277,7 +282,7 @@ function driving_update()
   trip.terrain[4]=trip.terrain[5]
   trip.terrain[5]=look_ahead(trip.terrain[4])
  end
- trip.modulus=flr(trip.distance)%8
+ trip.modulus=flr(trip.distance[1])%8
  --hang up the terrain across
  trip.terrain[1].x=16-trip.modulus
  trip.terrain[1].y=8
@@ -291,7 +296,7 @@ function driving_update()
  trip.terrain[5].y=8 
 
  --seasonal berries 
- if(flr(trip.distance)%250==0 and rnd()>0.25) then
+ if(flr(trip.distance[1])%250==0 and rnd()>0.25) then
   regional_berry_color=berry_color()
  end
 end
@@ -489,7 +494,7 @@ function berry_picking()
          sfx(6)
          trip.terrain[t].berries[b].picked=true
          score+=1
-         if(score==100) then
+         if(score==1) then
           --earn a golden bmw
           car.sprite=48
           car.speed_limit=1.05
