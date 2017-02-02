@@ -157,6 +157,18 @@ end
 
 function mountain_mgmt()
 
+ --distance flipped? convert mileposts.
+ if(trip.distance[1]<trip.mountains.far[1].milepost) then
+  for m=1,#trip.mountains.far do
+   trip.mountains.far[m].milepost=-1*(32768-trip.mountains.far[m].milepost)
+  end
+ end
+ if(trip.distance[1]<trip.mountains.near[1].milepost) then
+  for m=1,#trip.mountains.near do
+   trip.mountains.near[m].milepost=-1*(32768-trip.mountains.near[m].milepost)
+  end
+ end
+
  --passed mountain? retire
  if(trip.mountains.far[1].milepost<trip.distance[1]-100) then
   for i=2,#trip.mountains.far do
@@ -170,7 +182,7 @@ function mountain_mgmt()
   end
   trip.mountains.near[#trip.mountains.near]=nil
  end
- 
+
  --not enough mountains? add
  while(#trip.mountains.far<18) do
   local n
@@ -273,7 +285,7 @@ function driving_update()
   trip.distance[2]+=1
  end
 
- trip.distance[1]+=20*car.speed+rnd(0.01)
+ trip.distance[1]+=car.speed+rnd(0.01)
  if(trip.distance[1]%8<trip.modulus) then
   --terrain rotation
   trip.terrain[1]=trip.terrain[2]
@@ -497,7 +509,7 @@ function berry_picking()
          if(score==1) then
           --earn a golden bmw
           car.sprite=48
-          car.speed_limit=1.05
+          car.speed_limit=11.05
           sfx(7)
          end
         else
