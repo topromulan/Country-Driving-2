@@ -234,7 +234,7 @@ end
 
 function driving_update()
  car.x=25 car.y=9
- if(not car.cruise) then
+ if(not btn(4) and not car.cruise) then
   car.speed-=0.003
  end
  if(car.speed>car.speed_limit) then
@@ -245,12 +245,13 @@ function driving_update()
  end
  if(btn(0)) then
   --brakes
-  car.x-=1 car.speed*=0.92
+  car.x-=1 car.speed*=0.97 car.speed-=0.005
   car.cruise=false
-  if(car.speed<0.05) then
+  if(car.speed<0.001) then
    car.speed=0
   end
  else
+  --coasting
   if(car.speed<0.125) then
    car.speed+=0.005
   end
