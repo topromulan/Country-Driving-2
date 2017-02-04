@@ -116,6 +116,9 @@ function _game_init()
  car.speed=0
  car.mph=0
  car.speed_limit=0.55
+ car.x=25 car.y=9
+ car.xregular=25
+ car.ylimt=9 car.ylimb=10
 
  trip={}
  trip.distance={0,0}
@@ -233,7 +236,8 @@ function _game_update()
 end
 
 function driving_update()
- car.x=25 car.y=9
+ car.x=car.xregular
+ debug2=car.y
  if(not btn(4) and not car.cruise) then
   car.speed-=0.003
  end
@@ -258,11 +262,14 @@ function driving_update()
  end
  car.mph=flr(car.speed/0.013)
 
+ if(btn(2)) then
+  car.y-=1
+ end
  if(btn(3)) then
   car.y+=1
   if(car.speed==0 and not btnp4_reminder) then
    --double check to avoid jumping in/out
-   if(buckling_up_until[1]<runtime[1] or buckling_up_until[2]<runtime[2]) then
+   if(buckling_up_until[1]<runtime[1] or buckling_up_until[2]<runtime[2]) then    
     car.y+=1
     driving=false
     sfx(-2,3)
@@ -278,6 +285,9 @@ function driving_update()
   car.cruise=not car.cruise
   btnp5_reminder=true
  end
+
+ if(car.y<car.ylimt) car.y=car.ylimt
+ if(car.y>car.ylimb and driving) car.y=car.ylimb
  
  poke(0x3241,abs(1-car.speed)*20)
 
