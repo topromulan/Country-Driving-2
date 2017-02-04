@@ -17,6 +17,8 @@ function _init()
 end
 
 function _update()
+ debug1=regional_berry_color
+
  if(runtime[1]<0) then
   runtime[1]=0
   runtime[2]+=1
@@ -237,7 +239,6 @@ end
 
 function driving_update()
  car.x=car.xregular
- debug2=car.y
  if(not btn(4) and not car.cruise) then
   car.speed-=0.003
  end
@@ -319,7 +320,7 @@ function driving_update()
  trip.terrain[5].y=8 
 
  --seasonal berries 
- if(flr(trip.distance[1])%250==0 and rnd()>0.25) then
+ if(rnd()<0.015) then
   regional_berry_color=berry_color()
  end
 end
@@ -470,18 +471,14 @@ function plant_berry(terrain)
 end  
 
 function berry_color()
- if(rnd(1)>0.5) then
-  return 8
+ if(rnd()>0.7) then
+  return 8 --red huckleberries
+ elseif(rnd()>0.65) then
+  return 2 --purple huckleberries
+ elseif(rnd()>0.5) then
+  return 1 --blue huckleberries
  else
-  if(rnd(1)>0.25) then
-   return 2
-  else
-   if(rnd(1)>0.5) then
-    return 1 
-   else
-    return 14 --new, pink
-   end
-  end
+  return 14 --salmonberries
  end
 end
 
