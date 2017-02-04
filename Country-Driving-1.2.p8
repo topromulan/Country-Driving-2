@@ -271,7 +271,7 @@ function driving_update()
   if(car.speed==0 and not btnp4_reminder) then
    --double check to avoid jumping in/out
    if(buckling_up_until[1]<runtime[1] or buckling_up_until[2]<runtime[2]) then    
-    car.y+=1
+    car.y=11
     driving=false
     sfx(-2,3)
     guy.x=22
