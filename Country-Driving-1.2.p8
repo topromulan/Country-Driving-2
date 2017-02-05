@@ -118,7 +118,9 @@ function _game_init()
  regional_berry_color=berry_color()
 
  guy={}
- guy.sprite=33
+ guy.male=true
+ guy.facing_away=false
+ guy.sprite=guy_sprite_fn
  guy.x=20 guy.y=10
  guy.xliml=12 guy.xlimr=44
  guy.ylimt=8 guy.ylimb=11
@@ -168,6 +170,24 @@ function _game_init()
  trip.mountains.near[1].flip2=false
 
  mountain_mgmt()
+end
+
+function guy_sprite_fn()
+ local s
+ if(guy.male) then
+  if(guy.facing_away) then
+   s=32
+  else
+   s=33
+  end
+ else
+  if(guy.facing_away) then
+   s=35
+  else
+   s=34
+  end
+ end
+ return s
 end
 
 function mountain_mgmt()
@@ -489,8 +509,8 @@ end
 function berry_picking()
  if(btn(0)) then guy.x-=0.2 end
  if(btn(1)) then guy.x+=0.2 end
- if(btn(2)) then guy.y-=0.15 end
- if(btn(3)) then guy.y+=0.15 end
+ if(btn(2)) then guy.y-=0.15 guy.facing_away=true end
+ if(btn(3)) then guy.y+=0.15 guy.facing_away=false end
  if(guy.x<guy.xliml) then guy.x=guy.xliml end
  if(guy.x>guy.xlimr) then guy.x=guy.xlimr end
  if(guy.y<guy.ylimt) then guy.y=guy.ylimt end
@@ -538,11 +558,7 @@ function berry_picking()
  elseif(btn(5) and not btnp5_reminder) then
   --alternate gender id
   btnp5_reminder=true
-  if(guy.sprite==33) then
-   guy.sprite=34
-  else
-   guy.sprite=33
-  end
+  guy.male=not guy.male
  end
 end
 
@@ -586,7 +602,7 @@ function game_draw_1x1()
  spr(17,40,16)
   
  if(not driving) then
-  spr(guy.sprite,guy.x,guy.y)
+  spr(guy.sprite(),guy.x,guy.y)
  end
  
  spr(car.sprite,car.x,car.y)
@@ -618,7 +634,7 @@ __gfx__
 00060000000000000000000000000000000000008888808080888080000000000000000000000000000000003333334333333333000000003333334333333333
 00000000000000000000000000000000000000000800800088880000000000000000000000000000000000000000000000000000000000000000000000000000
 000440000004400000aaaa0000aaaa00000000008880800080080000000000000000000088888800008800000000000000044000000000000000000000000000
-000ff000000ff0000aaffaa00aaaaaa0000000000800888088880000000000000000000011111100087680000444444404444400000000000000000000000000
+00044000000ff0000aaffaa00aaaaaa0000000000800888088880000000000000000000011111100087680000444444404444400000000000000000000000000
 0bbbbbb00bbbbbb00007700000aaaa00111110000800808080000000000000000000000088888800087780000404040444444440000000000000000000000000
 0b0bb0b00b0bb0b0000eeef0000eeee0cc5c11000000000088880000000000000000000004004000008800003434343433333333000000000000000000000000
 0b0bb4440b0bb44400eee44400eee444111111100000000000000000000000000000000004004000004400003111111133333333000000000000000000000000
