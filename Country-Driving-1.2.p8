@@ -17,8 +17,6 @@ function _init()
 end
 
 function _update()
- debug1=regional_berry_color
-
  if(runtime[1]<0) then
   runtime[1]=0
   runtime[2]+=1
@@ -117,7 +115,7 @@ function _game_init()
  car.sprite=36
  car.speed=0
  car.mph=0
- car.speed_limit=0.55
+ car.speed_limit=0.69
  car.x=25 car.y=9
  car.xregular=25
  car.ylimt=9 car.ylimb=10
@@ -508,10 +506,10 @@ function berry_picking()
          sfx(6)
          trip.terrain[t].berries[b].picked=true
          score+=1
-         if(score==1) then
+         if(score==100) then
           --earn a golden bmw
           car.sprite=48
-          car.speed_limit=11.05
+          car.speed_limit=1.05
           sfx(7)
          end
         else
