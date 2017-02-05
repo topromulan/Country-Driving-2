@@ -9,11 +9,8 @@ function _init()
  runtime={0,0}
 
  game_mode={}
- game_mode.update=_game_update
- game_mode.draw=_game_draw
- _game_init()
- driving_update()
- car.y=11
+
+ play_countryside_driving()
 end
 
 function _update()
@@ -28,6 +25,41 @@ function _update()
 end
 
 function _draw()
+ game_mode.draw()
+
+ if(debug1!=nil) then
+  print(debug1,0,30,9,0)
+  if(debug1_memory!=debug1) then debug1_memory=debug1 debug1_reminder=runtime[1] end
+  if(runtime[1]-debug1_reminder>90) then debug1=nil debug1_memory=nil debug1_reminder=nil end
+ end
+ if(debug2!=nil) then
+  print(debug2,0,40,9,0)
+  if(debug2_memory!=debug2) then debug2_memory=debug2 debug2_reminder=runtime[1] end
+  if(runtime[1]-debug2_reminder>90) then debug2=nil debug2_memory=nil debug2_reminder=nil end
+ end
+ if(debug3!=nil) then
+  print(debug3,0,59,9,0)
+  if(debug3_memory!=debug3) then debug3_memory=debug3 debug3_reminder=runtime[1] end
+  if(runtime[1]-debug3_reminder>90) then debug3=nil debug3_memory=nil debug3_reminder=nil end
+ end
+ if(debug4!=nil) then
+  print(debug4,0,69,9,0)
+ if(debug4_memory!=debug4) then debug4_memory=debug4 debug4_reminder=runtime[1] end
+  if(runtime[1]-debug4_reminder>90) then debug4=nil debug4_memory=nil debug4_reminder=nil end
+ end
+
+end
+
+function play_countryside_driving()
+ game_mode.update=_game_update
+ game_mode.draw=game_draw_new
+ _game_init()
+ driving_update()
+ car.y=11
+end
+
+
+function game_draw_new()
 
  cls(12)
  
@@ -49,7 +81,7 @@ function _draw()
  rectfill(0,95,127,127,4)--dirt
 
  --draw with original engine
- game_mode.draw()
+ game_draw_1x1()
 
  --magnify
  for y=0,32 do
@@ -75,26 +107,6 @@ function _draw()
  if(car.cruise) then print("cruise",100,120,11) end
 
 
- if(debug1!=nil) then
-  print(debug1,0,30,9,0)
-  if(debug1_memory!=debug1) then debug1_memory=debug1 debug1_reminder=runtime[1] end
-  if(runtime[1]-debug1_reminder>90) then debug1=nil debug1_memory=nil debug1_reminder=nil end  
- end
- if(debug2!=nil) then
-  print(debug2,0,40,9,0)
-  if(debug2_memory!=debug2) then debug2_memory=debug2 debug2_reminder=runtime[1] end
-  if(runtime[1]-debug2_reminder>90) then debug2=nil debug2_memory=nil debug2_reminder=nil end  
- end
- if(debug3!=nil) then
-  print(debug3,0,59,9,0)
-  if(debug3_memory!=debug3) then debug3_memory=debug3 debug3_reminder=runtime[1] end
-  if(runtime[1]-debug3_reminder>90) then debug3=nil debug3_memory=nil debug3_reminder=nil end  
- end
- if(debug4!=nil) then
-  print(debug4,0,69,9,0)
- if(debug4_memory!=debug4) then debug4_memory=debug4 debug4_reminder=runtime[1] end
-  if(runtime[1]-debug4_reminder>90) then debug4=nil debug4_memory=nil debug4_reminder=nil end  
- end
   
 end
 
@@ -115,7 +127,7 @@ function _game_init()
  car.sprite=36
  car.speed=0
  car.mph=0
- car.speed_limit=0.69
+ car.speed_limit=0.71
  car.x=25 car.y=9
  car.xregular=25
  car.ylimt=9 car.ylimb=10
@@ -536,7 +548,7 @@ end
 
 
 ---draw your game here
-function _game_draw()
+function game_draw_1x1()
 
  for t=1,5 do
   spr(trip.terrain[t].sprite,trip.terrain[t].x,trip.terrain[t].y)
