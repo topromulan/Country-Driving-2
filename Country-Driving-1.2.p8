@@ -370,15 +370,17 @@ function look_ahead(of)
    upcoming.sprite=5
    upcoming=bloom(upcoming)
    upcoming.topper=bush_topper()
+   upcoming.bush_length=1
   end
  elseif(current.sprite==5) then
   --bush maybe continues or ends
-  if(rnd(1)>0.85) then
+  if(rnd()>0.85 or (current.bush_length>6 and rnd()>0.25)) then
    upcoming.sprite=15 --end
   else
    upcoming.sprite=5 --big one!
    upcoming=bloom(upcoming)
    upcoming.topper=bush_topper()
+   upcoming.bush_length=current.bush_length+1
   end
  else
   --start hill, bush, or non-bush
@@ -460,14 +462,6 @@ function plant_berry(terrain)
  berry.y=yguess
  berry.clr=regional_berry_color
  return berry
---  local berry={}
---  berry.x=#terrain.berries-1
---  berry.y=flr(rnd(4))
---  while(#terrain.berries>1 and berry.y==terrain.berries[#terrain.berries].y) do
---   berry.y=1+flr(rnd(5))
---  end
---  berry.clr=regional_berry_color
--- return berry
 end  
 
 function berry_color()
