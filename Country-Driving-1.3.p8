@@ -224,7 +224,7 @@ function mountain_mgmt()
  end
 
  --passed mountain? retire
- if(trip.mountains.farther[1].milepost<trip.distance[1]-100) then
+ if(trip.mountains.farther[1].milepost<trip.distance[1]-300) then
   for i=2,#trip.mountains.farther do
    trip.mountains.farther[i-1]=trip.mountains.farther[i]
   end
@@ -244,11 +244,11 @@ function mountain_mgmt()
  end
 
  --not enough mountains? add
- while(#trip.mountains.farther<19) do
+ while(#trip.mountains.farther<30) do
   local n
   n=#trip.mountains.farther+1
   trip.mountains.farther[n]={}
-  trip.mountains.farther[n].milepost=trip.mountains.farther[n-1].milepost+20+rnd(12)
+  trip.mountains.farther[n].milepost=trip.mountains.farther[n-1].milepost+35+rnd(12)
   trip.mountains.farther[n].elevation=-4+rnd(5)
   trip.mountains.farther[n].scene=flr(rnd(4))
   trip.mountains.farther[n].flip1=(0.4<rnd())
@@ -277,12 +277,12 @@ function mountain_mgmt()
 
  --hang the x/y coordinates
  for m=1,#trip.mountains.farther do
-  trip.mountains.farther[m].x=(trip.mountains.farther[m].milepost-trip.distance[1])*0.39
-  trip.mountains.farther[m].y=22+trip.mountains.farther[m].elevation
+  trip.mountains.farther[m].x=(trip.mountains.farther[m].milepost-trip.distance[1])*0.15
+  trip.mountains.farther[m].y=26+trip.mountains.farther[m].elevation
  end
  for m=1,#trip.mountains.far do
   trip.mountains.far[m].x=(trip.mountains.far[m].milepost-trip.distance[1])*0.59
-  trip.mountains.far[m].y=30+trip.mountains.far[m].elevation
+  trip.mountains.far[m].y=28+trip.mountains.far[m].elevation
  end
  for m=1,#trip.mountains.near do
   trip.mountains.near[m].x=(trip.mountains.near[m].milepost-trip.distance[1])*0.91
