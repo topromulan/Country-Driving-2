@@ -62,7 +62,7 @@ end
 function intro_update()
  local r=runtime[1]
 
- if(btnp()!=0) play_countryside_driving()
+ if(btnp(4) or btnp(5)) play_countryside_driving()
 end
 
 function intro_draw()
@@ -215,6 +215,9 @@ function _game_init()
  trip.mountains.near[1].flip2=false
 
  mountain_mgmt()
+ 
+ if(btn(4)) btnp4_reminder=true
+ if(btn(5)) btnp5_reminder=true
  
 -- trip.mobiles={}
 end
