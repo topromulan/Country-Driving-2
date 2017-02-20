@@ -28,22 +28,22 @@ function _draw()
  game_mode.draw()
 
  if(debug1!=nil) then
-  print(debug1,0,30,9,0)
+  print(debug1,2,30,9)
   if(debug1_memory!=debug1) then debug1_memory=debug1 debug1_reminder=runtime[1] end
   if(runtime[1]-debug1_reminder>90) then debug1=nil debug1_memory=nil debug1_reminder=nil end
  end
  if(debug2!=nil) then
-  print(debug2,0,40,9,0)
+  print(debug2,2,40,9)
   if(debug2_memory!=debug2) then debug2_memory=debug2 debug2_reminder=runtime[1] end
   if(runtime[1]-debug2_reminder>90) then debug2=nil debug2_memory=nil debug2_reminder=nil end
  end
  if(debug3!=nil) then
-  print(debug3,0,59,9,0)
+  print(debug3,2,59,9)
   if(debug3_memory!=debug3) then debug3_memory=debug3 debug3_reminder=runtime[1] end
   if(runtime[1]-debug3_reminder>90) then debug3=nil debug3_memory=nil debug3_reminder=nil end
  end
  if(debug4!=nil) then
-  print(debug4,0,69,9,0)
+  print(debug4,2,69,9)
  if(debug4_memory!=debug4) then debug4_memory=debug4 debug4_reminder=runtime[1] end
   if(runtime[1]-debug4_reminder>90) then debug4=nil debug4_memory=nil debug4_reminder=nil end
  end
@@ -137,7 +137,12 @@ function game_draw_new()
  if(driving) then
   print(car.mph,60,120,7)
   print("mph",70,120,15)
-  print("mile "..flr(trip.distance[1]/50+(32000/50)*trip.distance[2])/10,5,120,1)
+  local miles,d1,d2,mile_factor
+  mile_factor=250
+  miles=(trip.distance[1]/mile_factor+(trip.distance[2]/mile_factor)*trip.flipevery)
+  d1=flr(miles)
+  d2=flr(miles*10)%10
+  print("mile "..d1.."."..d2,5,120,1)
  else
   print("berry "..score,5,120,2)
  end
@@ -166,13 +171,15 @@ function _game_init()
  car.sprite=36
  car.speed=0
  car.mph=0
- car.speed_limit=0.71
+ car.speed_limit=1.05
+ car.acceleration=0.01
  car.x=25 car.y=9
  car.xregular=25
  car.ylimt=9 car.ylimb=10
 
  trip={}
  trip.distance={0,0}
+ trip.flipevery=350
  trip.modulus=1
  trip.terrain={}
  trip.terrain[1]=nil
@@ -241,21 +248,20 @@ function guy_sprite_fn()
 end
 
 function mountain_mgmt()
-
  --distance flipped? convert mileposts.
  if(trip.distance[1]<trip.mountains.farther[1].milepost) then
   for m=1,#trip.mountains.farther do
-   trip.mountains.farther[m].milepost=-1*(32768-trip.mountains.farther[m].milepost)
+   trip.mountains.farther[m].milepost-=trip.flipevery
   end
  end
  if(trip.distance[1]<trip.mountains.far[1].milepost) then
   for m=1,#trip.mountains.far do
-   trip.mountains.far[m].milepost=-1*(32768-trip.mountains.far[m].milepost)
+   trip.mountains.far[m].milepost-=trip.flipevery
   end
  end
  if(trip.distance[1]<trip.mountains.near[1].milepost) then
   for m=1,#trip.mountains.near do
-   trip.mountains.near[m].milepost=-1*(32768-trip.mountains.near[m].milepost)
+   trip.mountains.near[m].milepost-=trip.flipevery
   end
  end
 
@@ -353,7 +359,8 @@ function driving_update()
   car.speed=car.speed_limit-0.007-rnd(0.004)
  end
  if(btn(1)) then
-  car.x+=1 car.speed+=0.01
+  car.x+=1 car.speed+=car.acceleration
+  if(car.speed<0.25) car.speed+=0.01
  end
  if(btn(0)) then
   --brakes
@@ -368,7 +375,7 @@ function driving_update()
    car.speed+=0.005
   end
  end
- car.mph=flr(car.speed/0.013)
+ car.mph=flr(car.speed/0.023)
 
  if(btn(2)) then
   car.y-=1
@@ -397,10 +404,10 @@ function driving_update()
  if(car.y<car.ylimt) car.y=car.ylimt
  if(car.y>car.ylimb and driving) car.y=car.ylimb
  
- poke(0x3241,abs(1-car.speed)*20)
+ poke(0x3241,abs(1.5-car.speed)*20)
 
- if(trip.distance[1]>32000 or trip.distance[1]<0) then
-  trip.distance[1]=0 --modulus a concern?
+ if(trip.modulus==0 and (trip.distance[1]>=trip.flipevery or trip.distance[1]<0)) then
+  trip.distance[1]%=trip.flipevery
   trip.distance[2]+=1
  end
 
@@ -618,7 +625,8 @@ function berry_picking()
          if(score==100) then
           --earn a golden bmw
           car.sprite=48
-          car.speed_limit=1.05
+          car.speed_limit=1.39
+          car.acceleration=0.015
           sfx(7)
          end
         else
